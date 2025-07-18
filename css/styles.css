@@ -8,7 +8,7 @@
 
 body {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     overflow: hidden;
     font-family: 'Orbitron', sans-serif;
     color: white;
@@ -41,4 +41,65 @@ body {
 @keyframes twinkle {
     0%, 100% { opacity: 0.2;}
     50% {opacity: 1;}
+}
+
+/* sidebar styles */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.glass-card {
+    background: rgba(10, 10, 40, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.stat-panel {
+    text-align: center;
+}
+
+.game-title {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.stat-item {
+    margin-bottom: 15px;
+}
+
+.stat-label {
+    display: block;
+    color: var(--neon-pink);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.health-bar, .power-bar {
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.health-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff0000, #ff5e00);
+    border-radius: 10px;
+    transition: width 0.3s ease;
 }
