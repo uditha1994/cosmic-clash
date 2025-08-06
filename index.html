@@ -17,10 +17,10 @@
     <div class="twinkling"></div>
 
     <!-- Main Game Container -->
-     <div class="container-fluid game-container">
+    <div class="container-fluid game-container">
         <div class="row">
             <!-- game stats sidebar  -->
-             <div class="col-md-3 sidebar">
+            <div class="col-md-3 sidebar">
                 <div class="stats-panel glass-card">
                     <h2 class="game-title">COSMIC CLASH</h2>
                     <div class="stat-item">
@@ -50,18 +50,18 @@
                 </div>
 
                 <!-- Game Controls -->
-                 <div class="controls-panel glass-card">
+                <div class="controls-panel glass-card">
                     <button id="start-btn" class="btn btn-neon">START GAME</button>
                     <button id="pause-btn" class="btn btn-neon">PAUSE</button>
                     <div class="volume-control">
                         <span class="control-label">VOLUME</span>
-                        <input type="range" id="volumn" min="0" max="1" step="0.1" value="0.7">
+                        <input type="range" id="volume" min="0" max="1" step="0.1" value="0.7">
                     </div>
-                 </div>
-             </div>
+                </div>
+            </div>
 
-             <!-- Game Canvas -->
-              <div class="col-md-9 canvas-container">
+            <!-- Game Canvas -->
+            <div class="col-md-9 canvas-container">
                 <canvas id="gameCanvas"></canvas>
                 <div class="game-over-panel" id="game-over">
                     <h2>GAME OVER</h2>
@@ -72,11 +72,14 @@
                     <h2>LEVEL COMPLETE</h2>
                     <p>Advancing to Level <span id="next-level">2</span></p>
                 </div>
-              </div>
+            </div>
         </div>
-     </div>
+    </div>
 
-     <script src="js/game.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/game.js"></script>
 </body>
 
 </html>

@@ -593,6 +593,11 @@ async function init() {
     window.addEventListener('resize', resizeCanvas);
 
     await loadImages();
+    
+    // button listeners
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('pause-btn').addEventListener('click', togglePause);
+    document.getElementById('restart-btn'). addEventListener('click', startGame);
 }
 
 window.addEventListener('load', init);
