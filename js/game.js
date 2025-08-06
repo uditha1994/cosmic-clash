@@ -67,7 +67,7 @@ function loadImages() {
         //Load enemy images
         for (let i = 0; i < 3; i++) {
             images.enemies[i] = new Image();
-            images.enemies[i].src = `assts/images/enemy${i + 1}.png`;
+            images.enemies[i].src = `assets/images/enemy${i + 1}.png`;
             images.enemies[i].onload = () => {
                 imagesLoaded++;
                 if (imagesLoaded === totalImages) resolve();
@@ -398,29 +398,190 @@ function update(deltatime) {
     }
 
     //update powerups
-    for (let i = powerUps.length - 1; i >= 0; 1--) { 
+    for (let i = powerUps.length - 1; i >= 0; i--) {
         powerUps[i].y += powerUps[i].speed;
 
-        if(powerUps[i].y > GAME_HEIGHT){
+        if (powerUps[i].y > GAME_HEIGHT) {
             powerUps.splice(i, 1);
             continue;
         }
 
-        if(checkCollision(player, powerUps[i])){
+        if (checkCollision(player, powerUps[i])) {
             const type = powerUps[i].type;
             player.addPowerup(type, 10000);
-            powerUps.splice(i,1);
+            powerUps.splice(i, 1);
             audioManager.play('powerup');
         }
     }
     particleSystem.update();
 
-    if(score >= level * LEVEL_SCORE_INCREMENT){
+    if (score >= level * LEVEL_SCORE_INCREMENT) {
         levelUp;
     }
 }
 
-function draw(){}
+function draw() {
+    //clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particleSystem.draw(ctx);
+
+    //draw player
+    if (gameRunning) {
+        player.draw();
+    }
+
+    //draw bullets
+    bullets.forEach(bullet => {
+        if (images.bullet) {
+            ctx.drawImage(
+                images.bullet,
+                bullet.x - bullet.width / 2,
+                bullet.y,
+                bullet.width,
+                bullet.height
+            );
+        } else {
+            //fallback if image fails to load
+            ctx.fillStyle = '#0fa';
+            ctx.fillRect(bullet.x - bullet.width / 2,
+                bullet.y, bullet.width, bullet.height);
+        }
+    });
+
+    //draw enemies
+    enemies.forEach(enemy => {
+        if (images.enemies[enemy.type]) {
+            ctx.save();
+
+            ctx.shadowColor = enemy.color;
+            ctx.shadowBlur = 5;
+
+            ctx.drawImage(
+                images.enemies[enemy.type],
+                enemy.x - enemy.width / 2,
+                enemy.y - enemy.height / 2,
+                enemy.width,
+                enemy.height
+            );
+            ctx.restore();
+        } else {
+            //fallback if image fails to load
+            ctx.fillStyle = enemy.color;
+            ctx.beginPath();
+            ctx.moveTo(enemy.x, enemy.y + enemy.height / 2);
+            ctx.lineTo(enemy.x + enemy.width / 2,
+                enemy.y - enemy.height / 2);
+            ctx.lineTo(enemy.x - enemy.width / 2,
+                enemy.y - enemy.height / 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+    });
+
+    //draw powerups
+    powerUps.forEach(powerup => {
+        const img = images.powerups[powerup.type];
+        if (img) {
+            ctx.save();
+
+            const pulseScale = 1 + 0.1 * Math.sin(Date.now() / 200);
+            ctx.shadowColor = powerup.color,
+                ctx.shadowBlur = 15;
+
+            ctx.drawImage(
+                img,
+                powerup.x - powerup.radius,
+                powerup.y - powerup.radius,
+                powerup.radius * 2,
+                powerup.radius * 2
+            );
+            ctx.restore();
+        } else {
+            //falback if image fails to load
+            ctx.fillStyle = powerup.color;
+            ctx.beginPath();
+            ctx.arc(powerup.x, powerup.y, powerup.radius,
+                0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'white';
+            ctx.fot = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(powerup.symbol, powerup.x, powerup.y);
+        }
+    });
+}
+
+function checkCollision(obj1, obj2) {
+    return obj1.x < obj2.x + obj2.width / 2 &&
+        obj1.x > obj2.x - obj2.width / 2 &&
+        obj1.y < obj2.y + obj2.height / 2 &&
+        obj1.y > obj2.y - obj2.height / 2
+}
+
+function spawnEnemy() {
+    const enemyTypes = [
+        { type: 0, width: 50, height: 50, color: '#ff5555' },
+        { type: 1, width: 55, height: 55, color: '#ffaa00' },
+        { type: 2, width: 60, height: 60, color: '#ff00aa' }
+    ];
+
+    const enemyType = Math.floor(Math.random() * enemyTypes.length);
+    const enemy = enemyTypes[enemyType];
+
+    enemies.push({
+        x: Math.random() * (canvas.width - enemy.width) + enemy.width / 2,
+        y: -enemy.height,
+        width: enemy.width,
+        height: enemy.height,
+        speed: ENEMY_SPEED + Math.random() * level * 0.2,
+        color: enemy.color,
+        type: enemy.type
+    });
+}
+
+//spawn a powerup
+function spawnPowerup() {
+    const powerupTypes = [
+        { type: 'rapid', color: '#00ffaa', radius: 20, duration: 8000 },
+        { type: 'shield', color: '#00aaff', radius: 20, duration: 10000 },
+        { type: 'speed', color: '#aa00ff', radius: 20, duration: 7000 }
+    ];
+
+    const powerup = powerupTypes
+    [Math.floor(Math.random() * powerupTypes.length)];
+
+    const spawnY = -40;
+    const spawnX = Math.random() * (canvas.width - 40) + 20;
+
+    powerUps.push({
+        x: spawnX,
+        y: spawnY,
+        radius: powerup.radius,
+        speed: 2.5,
+        color: powerup.color,
+        type: powerup.type,
+        duration: powerup.duration
+    });
+}
+
+function gameOver(){
+    gameRunning = false;
+    particleSystem.createExplosion(player.x, player.y, '#ff0000', 50);
+
+    //delaye game over display
+    setTimeout(()=>{
+        document.getElementById('final-score').textContent 
+        = score;
+        document.getElementById('game-over').style.display 
+        = 'block';
+    }, 1000);
+
+    audioManager.stop('background');
+    audioManager.play('gameOver');
+}
 
 //initialize game
 async function init() {
