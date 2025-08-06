@@ -24,6 +24,7 @@ let keys = {};
 let lastTime = 0;
 let enemySpawnRate = 60;
 let frameCount = 0;
+let activePowerups = {};
 
 let lastHitTime = 0;
 let isPlayerInvulnerable = false;
@@ -98,10 +99,77 @@ function loadImages(){
     });
 }
 
+//player object
+const player = {
+    x: GAME_WIDTH / 2,
+    y: GAME_HEIGHT - 100,
+    width: 60,
+    height: 80,
+    speed: PLAYER_SPEED,
+    lastShot: 0,
+    shootDelay: 300,
+
+    draw(){
+        if(images.players){
+            ctx.save();
+            if(isPlayerInvulnerable){
+                ctx.globalAlpha = 0.5;
+            }
+
+            if(activePowerups['shield']){
+                ctx.shadowColor = 'rgba(0, 255, 255, 0.7)';
+                ctx.shadowBlur = 20;
+            }
+
+            ctx.drawImage(
+                images.players,
+                this.x - this.width/2,
+                this.y - this.height/2,
+                this.width,
+                this.height
+            );
+
+            ctx.restore();
+
+        } else{
+            ctx.fillStyle = isPlayerInvulnerable ? 'rgba(0, 255, 170, 0.5)' : '#0fa'; 
+        }
+    },
+
+    update(){},
+
+    shoot(){},
+
+    takeDamage(amount){},
+
+    addPowerup(type, duration){},
+
+    removePowerup(type){},
+};
+
+function draw(){}
+function update(){}
+
+//resize canvas to fit container
+function resizeCanvas(){
+    const container = document.querySelector('.canvas-container');
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+
+    //Reposition player
+    if(gameRunning) {
+        //player
+    }
+}
+
 //initialize game
 async function init(){
     canvas = document.getElementById('gameCanvas');
     ctx = canvas.getContext('2d');
+
+    //set canvas size
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
     await loadImages();
 }
